@@ -1,4 +1,4 @@
-import React , {useState} from 'react';
+import React , {useState, useEffect} from 'react';
 import {X} from 'lucide-react'
 import Post from './Post';
 
@@ -9,6 +9,15 @@ function CreatePost(prop) {
   const [dat,setdate] = useState(new Date().toISOString().split('T')[0])
   const [image,setimage] = useState('')
 
+  useEffect(() => {
+  if (prop.inData) {
+    settitle(prop.inData.tit || '');
+    setcontent(prop.inData.cont || '');
+    setdate(prop.inData.dat || '');
+    setimage(prop.inData.image || '');
+  }
+}, [prop.inData]);
+
   function handleSubmit(e){
      e.preventDefault();
     prop.onSubmitPost({ tit, cont, dat, image });
@@ -17,12 +26,15 @@ function CreatePost(prop) {
    
 
   return (
-    <div className='  fixed inset-0 z-50 self-center bg-purple-700 max-h-[90vh] h-fit overflow-y-auto hide-scrollbar w-fit m-2 rounded-lg justify-self-center flex justify-center items-start p-3 rounded'>
-      <div className='bg-white text-black rounded-lg shadow-lg p-6 w-full max-w-lg'>
+    <div className=' fixed inset-0 z-100 self-center bg-purple-700 max-h-[90vh] h-fit overflow-y-auto hide-scrollbar w-fit  m-2 rounded-lg justify-self-center flex justify-center items-start p-3 rounded'>
+      <div className='bg-white text-black rounded-lg shadow-lg p-6 w-full min-[850px]:min-w-[50vw] max-[850px]:min-w-[80vw] max-w-lg'>
          <div className="relative">
       <button
         className="absolute top-[-10px] right-[-5px] w-8 h-8 rounded-full bg-gray-100 text-purple-700 flex items-center justify-center hover:bg-gray-200"
-        onClick={() => prop.showform(false)}
+        onClick={() => { prop.showform(false)
+          prop.setEindex(null);}
+          
+        }
       >
         <X className="w-4 h-4" />
       </button>
@@ -52,12 +64,13 @@ function CreatePost(prop) {
             </label>
             <textarea
               id="content"
+              rows={10}
               name="content"
               placeholder="Content"
               value={cont}
-               onChange={(e) => setcontent(e.target.value)}
+              onChange={(e) => setcontent(e.target.value)}
               required
-              className='w-full border border-gray-300 p-2 rounded h-32 resize-none focus:outline-none focus:ring-2 focus:ring-purple-500'
+              className='w-full border border-gray-300 p-2 rounded max-[600px]:h-32 resize-none focus:outline-none focus:ring-2 focus:ring-purple-500'
             />
           </div>
 
@@ -94,7 +107,7 @@ function CreatePost(prop) {
               id="date"
               name="date"
               type="date"
-               value={dat}
+              value={dat}
               onChange={(e) => setdate(e.target.value)}
               className="w-full border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
@@ -105,7 +118,7 @@ function CreatePost(prop) {
             type="submit"
             className="bg-gradient-to-r from-purple-700 to-purple-900 text-white mx-auto block px-6 py-2 font-semibold rounded hover:bg-purple-800 transition"
           >
-            Submit Post
+            {prop.inData? "Update Post":"Submit Post" }
           </button>
         </form>
       </div>

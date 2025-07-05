@@ -6,10 +6,24 @@ import Post from './Post';
 function Content() {
   const [form, showform] = useState(false);
   const [posts, setPosts] = useState([]);
+  const [eindex, setEindex] = useState(null);
 
   function handlePost(data) {
+    if(eindex!=null){
+      setPosts(prev => {
+        const updated = [...prev];
+        updated[eindex]=data;
+        return updated;
+      });
+      setEindex(null)
+    }else{
     setPosts(prev => [data, ...prev]);
+     }
     showform(false);
+  }
+
+  function deletePost(index){
+    setPosts(prev => prev.filter((_ , i) => i != index))
   }
 
   useEffect(() => {
@@ -32,6 +46,8 @@ function Content() {
             className=""
             showform={showform}
             onSubmitPost={handlePost}
+            setEindex={setEindex}
+            inData={eindex !== null ? posts[eindex] : null}
           />
         )}
       </div>
@@ -44,6 +60,11 @@ function Content() {
             content={post.cont}
             date={post.dat}
             img={post.image}
+            handledelete={() => {deletePost(index)}}
+            updatepost={() => {
+              setEindex(index);
+              showform(true)
+            }}
           />
         ))}
       </div>
